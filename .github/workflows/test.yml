@@ -1,0 +1,55 @@
+name: JaCoCo Report
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: 1.11
+
+      - name: Build with Maven
+        run: mvn package
+
+      - name: Run Tests
+        run: mvn test
+
+      - name: Generate JaCoCo Report
+        run: mvn jacoco:report
+        
+ report:
+  name: Upload JaCoCo Report
+  needs: build
+  runs-on: ubuntu-latest
+  if: always()
+
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Archive JaCoCo Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: jacoco-report
+        path: target/site/jacoco/index.html
+
+    - name: Download JaCoCo Report
+      uses: actions/download-artifact@v2
+      with:
+        name: jacoco-report
+        path: jacoco-report
+
+    - name: Verify JaCoCo Report Download
+      run: |
+        ls -R jacoco-report
