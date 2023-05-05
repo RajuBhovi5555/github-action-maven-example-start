@@ -24,6 +24,12 @@ jobs:
 
       - name: Generate JaCoCo Report
         run: mvn jacoco:report
+      
+      - name: Display target directory
+        run: ls target
+        
+      - name: List workspace contents
+        run: ls -R ${{ github.workspace }}
 
   report:
     name: Upload JaCoCo Report
